@@ -58,6 +58,14 @@ function App() {
         }
     }, [brand, scenes, audio, currentProjectId, step]);
 
+    // Invalidate Export on Edit
+    useEffect(() => {
+        if (exportState.status === 'success' || exportState.status === 'error') {
+            setExportState({ status: 'idle', progress: 0, message: 'Ready', result: null, error: null });
+            setExportJobId(null);
+        }
+    }, [scenes, brand, audio, aspectRatio]);
+
     // Polling Export Status
     useEffect(() => {
         if (!exportJobId) return;
@@ -119,6 +127,10 @@ function App() {
         setScenes([]);
         setAudio({ enabled: false, volume: 0.5, fade: true });
         setStep('brand');
+
+        // Reset Export State
+        setExportJobId(null);
+        setExportState({ status: 'idle', progress: 0, message: 'Ready', result: null, error: null });
     };
 
     const handleOpenProject = (project) => {
@@ -127,6 +139,10 @@ function App() {
         setScenes(project.scenes || []);
         setActiveSceneId(project.scenes?.[0]?.id || null);
         setAudio(project.audio || { enabled: false, volume: 0.5, fade: true });
+
+        // Reset Export State
+        setExportJobId(null);
+        setExportState({ status: 'idle', progress: 0, message: 'Ready', result: null, error: null });
 
         if (project.scenes && project.scenes.length > 0) {
             setStep('editor');
