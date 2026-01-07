@@ -61,6 +61,9 @@ function App() {
     // Invalidate Export on Edit
     useEffect(() => {
         if (exportState.status === 'success' || exportState.status === 'error') {
+            if (exportState.result?.url?.startsWith('blob:')) {
+                window.URL.revokeObjectURL(exportState.result.url);
+            }
             setExportState({ status: 'idle', progress: 0, message: 'Ready', result: null, error: null });
             setExportJobId(null);
         }
@@ -255,7 +258,10 @@ function App() {
                     status: 'success',
                     progress: 100,
                     message: 'Video Ready!',
-                    result: { outputUrl: url },
+                    result: {
+                        url: url,
+                        filename: `brand-motion-${Date.now()}.mp4`
+                    },
                     error: null
                 });
             } else {

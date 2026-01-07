@@ -30,22 +30,19 @@ export default function ExportModal({
     const handleDownload = () => {
         if (!exportResult?.url) return;
 
-        // Mobile detection
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        // Use anchor tag method for all environments to ensure 'download' attribute works with blob URLs
+        const a = document.createElement('a');
+        a.href = exportResult.url;
+        a.download = exportResult.filename || 'video.mp4';
 
-        if (isMobile) {
-            // Mobile: New tab anchor trigger
-            const a = document.createElement('a');
-            a.href = exportResult.url;
-            a.download = exportResult.filename || 'video.mp4';
-            a.target = '_blank';
-            document.body.appendChild(a);
-            a.click();
-            setTimeout(() => a.remove(), 100);
-        } else {
-            // Desktop: Direct navigation (relies on Content-Disposition: attachment)
-            window.location.href = exportResult.url;
-        }
+        // For some browsers, the element needs to be in the DOM
+        document.body.appendChild(a);
+        a.click();
+
+        // Cleanup
+        setTimeout(() => {
+            document.body.removeChild(a);
+        }, 100);
     };
 
     // Auto-download on success (Desktop only assumption: mostly via click, but requirement says "Auto-download via browser")
