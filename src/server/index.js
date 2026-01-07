@@ -27,9 +27,15 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true }));
 
+import os from 'os';
+
 // Serve generated videos
 // Serve generated videos with forced download
-app.use('/output', express.static(join(__dirname, '../../output/videos'), {
+const videoDir = process.env.VERCEL
+    ? join(os.tmpdir(), 'brandmotion/videos')
+    : join(__dirname, '../../output/videos');
+
+app.use('/output', express.static(videoDir, {
     setHeaders: (res, path) => {
         res.setHeader('Content-Disposition', 'attachment');
     }

@@ -29,11 +29,16 @@ export const JobStatus = {
     FAILED: 'failed',
 };
 
+import os from 'os';
+
 function ensureDirectories() {
+    const isVercel = process.env.VERCEL;
+    const baseDir = isVercel ? join(os.tmpdir(), 'brandmotion') : join(__dirname, '../../output');
+
     const dirs = [
-        join(__dirname, '../../output'),
-        join(__dirname, '../../output/temp'),
-        join(__dirname, '../../output/videos'),
+        baseDir,
+        join(baseDir, 'temp'),
+        join(baseDir, 'videos'),
     ];
 
     for (const dir of dirs) {
@@ -43,8 +48,8 @@ function ensureDirectories() {
     }
 
     return {
-        temp: join(__dirname, '../../output/temp'),
-        videos: join(__dirname, '../../output/videos'),
+        temp: join(baseDir, 'temp'),
+        videos: join(baseDir, 'videos'),
     };
 }
 
