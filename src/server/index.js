@@ -154,6 +154,39 @@ app.post('/api/export', (req, res) => {
 });
 
 /**
+ * POST /api/export/direct (Serverless optimized)
+ */
+app.post('/api/export/direct', async (req, res) => {
+    let jobId;
+    try {
+        const config = req.body;
+        jobId = createJob(config);
+
+        console.log(`🚀 Starting Direct Export for job: ${jobId}`);
+
+        // Wait for processing to complete in THIS request (keeps Lambda alive)
+        const result = await processJob(jobId);
+
+        if (result.success && existsSync(result.outputPath)) {
+            const fs = await import('fs');
+            const videoBuffer = fs.readFileSync(result.outputPath);
+
+            res.setHeader('Content-Type', 'video/mp4');
+            res.setHeader('Content-Disposition', `attachment; filename="brand-motion-${jobId}.mp4"`);
+            res.send(videoBuffer);
+
+            // Cleanup immediately
+            try { fs.unlinkSync(result.outputPath); } catch (e) { }
+        } else {
+            throw new Error('Video file generation failed or was empty.');
+        }
+    } catch (error) {
+        console.error('Direct Export Error:', error);
+        res.status(500).json({ success: false, error: error.message });
+    }
+});
+
+/**
  * POST /api/generate/async (Legacy alias)
  */
 app.post('/api/generate/async', (req, res) => {

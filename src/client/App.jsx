@@ -221,8 +221,8 @@ function App() {
         const payload = {
             brand,
             scenes,
-            aspectRatio, // Dynamic now
-            quality,     // Passed from modal
+            aspectRatio,
+            quality,
             audio: audio.enabled ? {
                 dataUrl: audio.dataUrl,
                 volume: audio.volume,
@@ -230,24 +230,55 @@ function App() {
             } : null
         };
 
-        try {
-            const response = await fetch('/api/export', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-            });
-            const data = await response.json();
+        const isVercel = window.location.hostname.includes('vercel.app');
 
-            if (data.success) {
-                setExportJobId(data.jobId);
+        try {
+            if (isVercel) {
+                // Vercel Strategy: Direct Binary Download (Sync)
+                setExportState(prev => ({ ...prev, progress: 10, message: 'Processing on Server (may take 60s)...' }));
+
+                const response = await fetch('/api/export/direct', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+
+                if (!response.ok) {
+                    const errData = await response.json().catch(() => ({ error: 'Request failed' }));
+                    throw new Error(errData.error || `Server Error (${response.status})`);
+                }
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+
+                setExportState({
+                    status: 'success',
+                    progress: 100,
+                    message: 'Video Ready!',
+                    result: { outputUrl: url },
+                    error: null
+                });
             } else {
-                throw new Error(data.error || 'Server rejected request');
+                // Local Strategy: Polling (Async)
+                const response = await fetch('/api/export', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    setExportJobId(data.jobId);
+                } else {
+                    throw new Error(data.error || 'Server rejected request');
+                }
             }
         } catch (e) {
+            console.error('Export error:', e);
             setExportState(prev => ({
                 ...prev,
                 status: 'error',
-                error: e.message || 'Network error'
+                error: e.message || 'Export failed'
             }));
         }
     };
