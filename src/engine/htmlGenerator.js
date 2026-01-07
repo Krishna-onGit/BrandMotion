@@ -23,7 +23,8 @@ export function generateSequenceHTML(config, timeline) {
   const { sceneTimings } = timeline;
 
   // 1. Setup Global Styles (Fonts, Colors)
-  const fontImport = `https://fonts.googleapis.com/css2?family=${brand.fonts.headline}:wght@700&family=${brand.fonts.body}:wght@400&family=Playfair+Display:wght@700&family=Fira+Code:wght@400&family=Bebas+Neue&display=swap`;
+  // Hardcoded to ensure all required fonts are available for Puppeteer
+  const fontImport = `https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Playfair+Display:wght@700&family=Fira+Code:wght@400&family=Bebas+Neue&display=swap`;
   const { primary, secondary } = brand.colors;
 
   // 2. Generate CSS for each scene
@@ -178,8 +179,8 @@ export function generateSequenceHTML(config, timeline) {
     css += generateKeyframes(`${sceneClass}-headline-entry`, preset.props);
     css += `
       .${sceneClass} .headline {
-        font-family: ${fontFamily};
-        font-size: ${fontSize};
+        font-family: ${fontFamily} !important;
+        font-size: ${fontSize} !important;
         font-weight: 700;
         color: ${headlineColor};
         margin-bottom: 20px;
@@ -200,8 +201,8 @@ export function generateSequenceHTML(config, timeline) {
       css += generateKeyframes(`${sceneClass}-subtext-entry`, preset.props);
       css += `
         .${sceneClass} .subtext {
-          font-family: 'Inter', sans-serif;
-          font-size: ${subFontSize};
+          font-family: 'Inter', sans-serif !important;
+          font-size: ${subFontSize} !important;
           color: ${subTextColor}; 
           opacity: 0;
           font-weight: 400;
