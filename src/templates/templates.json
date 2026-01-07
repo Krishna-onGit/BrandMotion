@@ -1,0 +1,335 @@
+{
+    "animations": [
+        {
+            "id": "fadeIn",
+            "name": "Fade In",
+            "description": "Smooth opacity fade from invisible to visible",
+            "category": "basic",
+            "duration": 1.5,
+            "easing": "ease-out",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0
+                },
+                "100%": {
+                    "opacity": 1
+                }
+            }
+        },
+        {
+            "id": "slideUp",
+            "name": "Slide Up",
+            "description": "Text slides up from below with fade",
+            "category": "motion",
+            "duration": 1.2,
+            "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "translateY(60px)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "translateY(0)"
+                }
+            }
+        },
+        {
+            "id": "slideLeft",
+            "name": "Slide Left",
+            "description": "Text slides in from the right",
+            "category": "motion",
+            "duration": 1.2,
+            "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "translateX(80px)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "translateX(0)"
+                }
+            }
+        },
+        {
+            "id": "slideRight",
+            "name": "Slide Right",
+            "description": "Text slides in from the left",
+            "category": "motion",
+            "duration": 1.2,
+            "easing": "cubic-bezier(0.16, 1, 0.3, 1)",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "translateX(-80px)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "translateX(0)"
+                }
+            }
+        },
+        {
+            "id": "scaleIn",
+            "name": "Scale In",
+            "description": "Text scales up from small with elastic feel",
+            "category": "motion",
+            "duration": 1.0,
+            "easing": "cubic-bezier(0.34, 1.56, 0.64, 1)",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "scale(0.5)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "scale(1)"
+                }
+            }
+        },
+        {
+            "id": "typewriter",
+            "name": "Typewriter",
+            "description": "Character-by-character typing effect",
+            "category": "special",
+            "duration": 2.5,
+            "easing": "steps(40, end)",
+            "isTypewriter": true,
+            "keyframes": {
+                "0%": {
+                    "width": "0"
+                },
+                "100%": {
+                    "width": "100%"
+                }
+            },
+            "cursorKeyframes": {
+                "0%, 100%": {
+                    "opacity": 1
+                },
+                "50%": {
+                    "opacity": 0
+                }
+            }
+        },
+        {
+            "id": "glowEntry",
+            "name": "Glow Entry",
+            "description": "Text fades in with glowing effect",
+            "category": "special",
+            "duration": 1.8,
+            "easing": "ease-out",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "textShadow": "0 0 0px transparent",
+                    "filter": "blur(8px)"
+                },
+                "50%": {
+                    "opacity": 0.8,
+                    "textShadow": "0 0 30px currentColor, 0 0 60px currentColor",
+                    "filter": "blur(2px)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "textShadow": "0 0 10px currentColor",
+                    "filter": "blur(0px)"
+                }
+            }
+        },
+        {
+            "id": "bounceIn",
+            "name": "Bounce In",
+            "description": "Text bounces in with spring effect",
+            "category": "motion",
+            "duration": 1.4,
+            "easing": "ease-out",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "scale(0.3) translateY(-100px)"
+                },
+                "50%": {
+                    "opacity": 1,
+                    "transform": "scale(1.05) translateY(0)"
+                },
+                "70%": {
+                    "transform": "scale(0.95)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "scale(1)"
+                }
+            }
+        },
+        {
+            "id": "zoomBlur",
+            "name": "Zoom Blur",
+            "description": "Cinematic zoom with motion blur",
+            "category": "cinematic",
+            "duration": 1.5,
+            "easing": "cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "scale(3)",
+                    "filter": "blur(20px)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "scale(1)",
+                    "filter": "blur(0)"
+                }
+            }
+        },
+        {
+            "id": "flipIn",
+            "name": "Flip In",
+            "description": "3D flip rotation entry",
+            "category": "3d",
+            "duration": 1.2,
+            "easing": "ease-out",
+            "keyframes": {
+                "0%": {
+                    "opacity": 0,
+                    "transform": "perspective(400px) rotateX(-90deg)"
+                },
+                "40%": {
+                    "opacity": 1,
+                    "transform": "perspective(400px) rotateX(20deg)"
+                },
+                "60%": {
+                    "transform": "perspective(400px) rotateX(-10deg)"
+                },
+                "80%": {
+                    "transform": "perspective(400px) rotateX(5deg)"
+                },
+                "100%": {
+                    "opacity": 1,
+                    "transform": "perspective(400px) rotateX(0)"
+                }
+            }
+        }
+    ],
+    "backgrounds": [
+        {
+            "id": "solidBlack",
+            "name": "Solid Black",
+            "type": "solid",
+            "value": "#000000"
+        },
+        {
+            "id": "solidWhite",
+            "name": "Solid White",
+            "type": "solid",
+            "value": "#ffffff"
+        },
+        {
+            "id": "darkGradient",
+            "name": "Dark Gradient",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%)"
+        },
+        {
+            "id": "oceanGradient",
+            "name": "Ocean Blue",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #0c1445 0%, #1a237e 50%, #0d47a1 100%)"
+        },
+        {
+            "id": "sunsetGradient",
+            "name": "Sunset",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #f093fb 0%, #f5576c 50%, #ff6b6b 100%)"
+        },
+        {
+            "id": "neonGradient",
+            "name": "Neon Night",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%)"
+        },
+        {
+            "id": "emeraldGradient",
+            "name": "Emerald",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #0f3443 0%, #34e89e 100%)"
+        },
+        {
+            "id": "warmGradient",
+            "name": "Warm Glow",
+            "type": "gradient",
+            "value": "linear-gradient(135deg, #2d1f00 0%, #b8860b 50%, #ffd700 100%)"
+        }
+    ],
+    "aspectRatios": {
+        "16:9": {
+            "width": 1920,
+            "height": 1080,
+            "label": "Landscape (YouTube)"
+        },
+        "9:16": {
+            "width": 1080,
+            "height": 1920,
+            "label": "Portrait (TikTok/Reels)"
+        },
+        "1:1": {
+            "width": 1080,
+            "height": 1080,
+            "label": "Square (Instagram)"
+        }
+    },
+    "fonts": [
+        {
+            "id": "inter",
+            "name": "Inter",
+            "family": "Inter, sans-serif",
+            "weights": [
+                400,
+                500,
+                600,
+                700,
+                800
+            ]
+        },
+        {
+            "id": "roboto",
+            "name": "Roboto",
+            "family": "Roboto, sans-serif",
+            "weights": [
+                400,
+                500,
+                700
+            ]
+        },
+        {
+            "id": "playfair",
+            "name": "Playfair Display",
+            "family": "'Playfair Display', serif",
+            "weights": [
+                400,
+                700
+            ]
+        },
+        {
+            "id": "montserrat",
+            "name": "Montserrat",
+            "family": "Montserrat, sans-serif",
+            "weights": [
+                400,
+                600,
+                800
+            ]
+        },
+        {
+            "id": "oswald",
+            "name": "Oswald",
+            "family": "Oswald, sans-serif",
+            "weights": [
+                400,
+                600,
+                700
+            ]
+        }
+    ]
+}
