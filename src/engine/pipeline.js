@@ -20,6 +20,41 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 // Job storage
 const jobs = new Map();
 
+// JSON Persistence Helper
+import { readFileSync } from 'fs';
+
+function getJobsFilePath() {
+    const { temp } = ensureDirectories();
+    return join(dirname(temp), 'jobs.json'); // Stored in base dir
+}
+
+function saveJobs() {
+    try {
+        const filePath = getJobsFilePath();
+        const data = JSON.stringify(Array.from(jobs.entries()));
+        writeFileSync(filePath, data);
+    } catch (e) {
+        console.warn('Failed to save jobs to disk:', e.message);
+    }
+}
+
+function loadJobs() {
+    try {
+        const filePath = getJobsFilePath();
+        if (existsSync(filePath)) {
+            const data = readFileSync(filePath, 'utf-8');
+            const entries = JSON.parse(data);
+            entries.forEach(([id, job]) => jobs.set(id, job));
+            console.log(`Loaded ${entries.length} jobs from disk.`);
+        }
+    } catch (e) {
+        console.warn('No existing jobs found or failed to load:', e.message);
+    }
+}
+
+// Load jobs on startup
+loadJobs();
+
 export const JobStatus = {
     PENDING: 'pending',
     GENERATING_HTML: 'generating_html',
@@ -60,6 +95,7 @@ function updateJobStatus(jobId, status, data = {}) {
         job.updatedAt = new Date().toISOString();
         Object.assign(job, data);
         jobs.set(jobId, job);
+        saveJobs(); // Persist
         console.log(`📋 Job ${jobId}: ${status}`);
     }
 }
@@ -80,6 +116,7 @@ export function createJob(config) {
         error: null,
     };
     jobs.set(jobId, job);
+    saveJobs(); // Persist
     return jobId;
 }
 
