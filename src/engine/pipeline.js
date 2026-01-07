@@ -133,21 +133,29 @@ export async function processJob(jobId) {
 
     try {
         // Quality Presets
+        const isVercel = process.env.VERCEL;
         const QUALITY_SETTINGS = {
-            low: { fps: 24, crf: 28 },
-            medium: { fps: 30, crf: 23 },
-            high: { fps: 60, crf: 18 }
+            low: { fps: 20, crf: 28, scale: 0.5 },
+            medium: { fps: isVercel ? 20 : 30, crf: 23, scale: isVercel ? 0.6 : 1 },
+            high: { fps: isVercel ? 24 : 60, crf: 18, scale: isVercel ? 0.75 : 1 }
         };
-        const quality = config.quality || 'medium';
-        const { fps, crf } = QUALITY_SETTINGS[quality] || QUALITY_SETTINGS.medium;
+
+        const qualityLevel = config.quality || 'medium';
+        const quality = QUALITY_SETTINGS[qualityLevel] || QUALITY_SETTINGS.medium;
+        const { fps, crf, scale } = quality;
 
         // Aspect Ratio
         const aspectRatio = config.aspectRatio || '16:9';
-        const dimensions = templateLoader.getAspectRatio(aspectRatio);
+        const originalDimensions = templateLoader.getAspectRatio(aspectRatio);
 
-        if (!dimensions) {
+        if (!originalDimensions) {
             throw new Error(`Invalid aspect ratio: ${aspectRatio}`);
         }
+
+        const dimensions = {
+            width: Math.floor(originalDimensions.width * scale),
+            height: Math.floor(originalDimensions.height * scale)
+        };
 
         // ===== PHASE 1: Generate HTML =====
         updateJobStatus(jobId, JobStatus.GENERATING_HTML, { progress: 10 });
@@ -156,39 +164,50 @@ export async function processJob(jobId) {
             throw new Error('BrandMotion sequences require "scenes" to be defined.');
         }
 
-        console.log(`🎬 Processing sequence with ${config.scenes.length} scenes`);
+        console.log(`🎬 Processing sequence: ${dimensions.width}x${dimensions.height} @ ${fps}fps`);
 
         const timeline = MotionEngine.calculateMasterTimeline(config.scenes);
 
-        // LIMIT CHECK
-        if (timeline.totalDuration > 60000) {
-            throw new Error("Video exceeds 60 seconds limit (v1 limit). Please shorten scenes.");
+        // LIMIT CHECK (Shorter for Vercel)
+        const maxDur = isVercel ? 15000 : 60000;
+        if (timeline.totalDuration > maxDur) {
+            throw new Error(`Video exceeds ${maxDur / 1000}s limit for Vercel. Please shorten scenes.`);
         }
 
         const html = generateSequenceHTML(config, timeline);
-
-        // Add buffer
-        const totalDuration = (timeline.totalDuration / 1000) + 1;
+        const totalDuration = (timeline.totalDuration / 1000) + 0.5;
 
         updateJobStatus(jobId, JobStatus.GENERATING_HTML, { progress: 20 });
 
         // ===== PHASE 2: Render Frames =====
         updateJobStatus(jobId, JobStatus.RENDERING, { progress: 25 });
-
         mkdirSync(frameDir, { recursive: true });
 
-        const renderResult = await renderToFrames(html, {
-            outputDir: frameDir,
-            width: dimensions.width,
-            height: dimensions.height,
-            duration: totalDuration,
-            fps: fps,
-            onProgress: (percent) => {
-                // Map render progress (0-100) to global progress (25-60)
-                const globalProgress = 25 + Math.round((percent / 100) * 35);
-                updateJobStatus(jobId, JobStatus.RENDERING, { progress: globalProgress });
-            }
-        });
+        let renderResult;
+        if (isVercel) {
+            // Faster Screencast Render for Vercel
+            const { renderWithScreencast } = await import('./render.js');
+            renderResult = await renderWithScreencast(html, {
+                outputDir: frameDir,
+                width: dimensions.width,
+                height: dimensions.height,
+                duration: totalDuration,
+                quality: 70
+            });
+        } else {
+            // High Quality Frame Render for Local
+            renderResult = await renderToFrames(html, {
+                outputDir: frameDir,
+                width: dimensions.width,
+                height: dimensions.height,
+                duration: totalDuration,
+                fps: fps,
+                onProgress: (percent) => {
+                    const globalProgress = 25 + Math.round((percent / 100) * 35);
+                    updateJobStatus(jobId, JobStatus.RENDERING, { progress: globalProgress });
+                }
+            });
+        }
 
         updateJobStatus(jobId, JobStatus.RENDERING, {
             progress: 60,

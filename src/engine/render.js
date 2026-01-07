@@ -188,14 +188,27 @@ export async function renderWithScreencast(html, options = {}) {
 
     let browser;
     try {
-        browser = await puppeteer.launch({
-            headless: 'new',
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-            ],
-        });
+        if (process.env.VERCEL) {
+            const chromium = await import('@sparticuz/chromium').then(m => m.default);
+            const puppeteerCore = await import('puppeteer-core').then(m => m.default);
+            chromium.setGraphicsMode = false;
+            browser = await puppeteerCore.launch({
+                args: chromium.args,
+                defaultViewport: chromium.defaultViewport,
+                executablePath: await chromium.executablePath(),
+                headless: chromium.headless,
+                ignoreHTTPSErrors: true,
+            });
+        } else {
+            browser = await puppeteer.launch({
+                headless: 'new',
+                args: [
+                    '--no-sandbox',
+                    '--disable-setuid-sandbox',
+                    '--disable-dev-shm-usage',
+                ],
+            });
+        }
 
         const page = await browser.newPage();
         await page.setViewport({ width, height, deviceScaleFactor: 1 });
