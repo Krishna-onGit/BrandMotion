@@ -259,6 +259,9 @@ async function start() {
     });
 }
 
-start();
+// Only start server if run directly (CLI/Local)
+if (process.argv[1] === fileURLToPath(import.meta.url)) {
+    start();
+}
 
 export default app;
